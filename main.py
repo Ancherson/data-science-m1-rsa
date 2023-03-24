@@ -20,10 +20,10 @@ for appareil in appareils:
     clf = DecisionTreeClassifier()
     clf.fit(X, y)
     resultats[appareil] = clf.predict(consommation2_df)
-resultats['House_id'] = consommation2_df['House_id'].values.tolist()
-for elt in resultats :
-    print(elt)
-    print(len(resultats[elt]))
+# resultats['House_id'] = consommation2_df['House_id'].values.tolist()
+# for elt in resultats :
+#     print(elt)
+#     print(len(resultats[elt]))
 # Convertir les résultats en un DataFrame pandas et les enregistrer dans un fichier CSV
 resultats_df = pd.DataFrame(resultats)
-resultats_df.to_csv("resultats.csv", index=True,index_label='Index',columns=['House_id','Washing Machine', 'Dishwasher', 'Tumble Dryer', 'Microwave', 'Kettle'])
+resultats_df.to_csv("resultats.csv", index=True,index_label='Index',columns=['Washing Machine', 'Dishwasher', 'Tumble Dryer', 'Microwave', 'Kettle'])
