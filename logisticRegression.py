@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
 
 # load data
 consommation1_df = pd.read_csv("InputTrain.csv")
@@ -17,11 +17,11 @@ resultats = ({appareil: [] for appareil in appareils})
 for appareil in appareils:
     print(appareil)
     y = activation_df[appareil].values
-    svc = SVC(kernel='linear', random_state=0) #kernel=sigmoid > poly > rbf, linear too long
-    svc.fit(x, y)
-    resultats[appareil] = svc.predict(consommation2_df)
+    lr = LogisticRegression(random_state=0)
+    lr.fit(x, y)
+    resultats[appareil] = lr.predict(consommation2_df)
 
 # convert the results to a pandas DataFrame and save to a CSV file
 print("saving results")
 resultats_df = pd.DataFrame(resultats)
-resultats_df.to_csv("svmResultsLinear.csv", index=True, index_label='Index', columns=appareils)
+resultats_df.to_csv("lrResults.csv", index=True, index_label='Index', columns=appareils)

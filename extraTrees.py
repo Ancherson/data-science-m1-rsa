@@ -1,12 +1,13 @@
 import pandas as pd
-from sklearn.svm import SVC
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.model_selection import GridSearchCV
 
 # load data
 consommation1_df = pd.read_csv("InputTrain.csv")
 consommation2_df = pd.read_csv("InputTest.csv")
 activation_df = pd.read_csv("StepOne_LabelTrain.csv")
 
-# select columns corresponding to the appliances in the activation file
+# select columns corresponding to appliances in the activation file
 appareils = ['Washing Machine', 'Dishwasher', 'Tumble Dryer', 'Microwave', 'Kettle']
 x = consommation1_df.values
 
@@ -17,11 +18,16 @@ resultats = ({appareil: [] for appareil in appareils})
 for appareil in appareils:
     print(appareil)
     y = activation_df[appareil].values
-    svc = SVC(kernel='linear', random_state=0) #kernel=sigmoid > poly > rbf, linear too long
-    svc.fit(x, y)
-    resultats[appareil] = svc.predict(consommation2_df)
+    et = ExtraTreesClassifier(random_state=0)
+    param_grid = {
+        'n_estimators': [100, 250, 500, 750, 1000, 1500]  # specify values to search
+    }
+    grid_search = GridSearchCV(et, param_grid, cv=5)  # use 5-fold cross validation
+    grid_search.fit(x, y)
+    print(f"Best parameters for {appareil}: {grid_search.best_params_}")
+    resultats[appareil] = grid_search.predict(consommation2_df)
 
 # convert the results to a pandas DataFrame and save to a CSV file
 print("saving results")
 resultats_df = pd.DataFrame(resultats)
-resultats_df.to_csv("svmResultsLinear.csv", index=True, index_label='Index', columns=appareils)
+resultats_df.to_csv("etResultsGridSearch.csv", index=True, index_label='Index', columns=appareils)
